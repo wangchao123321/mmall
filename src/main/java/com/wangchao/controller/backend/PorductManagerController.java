@@ -9,6 +9,7 @@ import com.wangchao.service.IProductService;
 import com.wangchao.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
@@ -62,5 +63,22 @@ public class PorductManagerController {
             return ServerResponse.createByErrorMessage("无权限操作");
         }
     }
+
+
+    @RequestMapping("getList.do")
+    public ServerResponse getList(HttpSession session,
+                                  @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
+                                  @RequestParam(value = "pageSize",defaultValue = "10") int pageSize){
+        User user= (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录，请登录管理员");
+        }
+        if(iUserService.checkAdminRole(user).isSuccess()){
+            return iProductService.getProduct(pageNum,pageSize);
+        }else{
+            return ServerResponse.createByErrorMessage("无权限操作");
+        }
+    }
+
 
 }

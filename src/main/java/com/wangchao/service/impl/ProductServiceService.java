@@ -1,5 +1,8 @@
 package com.wangchao.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.wangchao.common.ResponseCode;
 import com.wangchao.common.ServerResponse;
 import com.wangchao.dao.CategoryMapper;
@@ -10,10 +13,13 @@ import com.wangchao.service.IProductService;
 import com.wangchao.util.DateTimeUtil;
 import com.wangchao.util.PropertiesUtil;
 import com.wangchao.vo.ProductDetailVO;
+import com.wangchao.vo.ProductListVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service("iProductService")
 public class ProductServiceService implements IProductService {
@@ -85,6 +91,35 @@ public class ProductServiceService implements IProductService {
 
         ProductDetailVO productDetailVO=assembleProductDetailVO(product);
         return ServerResponse.createBySuccess(productDetailVO);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> getProduct(int pageNum, int pageSize) {
+
+        PageHelper.startPage(pageNum,pageSize);
+        List<Product> productList=productMapper.selectList();
+
+        List<ProductListVO> productListVOS= Lists.newArrayList();
+        for (Product product : productList) {
+            ProductListVO productListVO = assembleProductListVO(product);
+            productListVOS.add(productListVO);
+        }
+        PageInfo pageInfo=new PageInfo<>(productListVOS);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+
+    private ProductListVO assembleProductListVO(Product product){
+        ProductListVO productListVO=new ProductListVO();
+        productListVO.setId(product.getId());
+        productListVO.setName(product.getName());
+        productListVO.setCategoryId(product.getCategoryId());
+        productListVO.setMainImage(product.getMainImage());
+        productListVO.setSubtitle(product.getSubtitle());
+        productListVO.setPrice(product.getPrice());
+        productListVO.setStatus(product.getStatus());
+        productListVO.setImagesHost(PropertiesUtil.getProperty("ftp.server.http.prefix","http://images.happymmall.com"));
+        return productListVO;
     }
 
     private ProductDetailVO assembleProductDetailVO(Product product){
