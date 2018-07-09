@@ -182,4 +182,18 @@
     <include refid="Base_Column_List" />
       FROM mmall_product ORDER BY id DESC
   </select>
+
+  <select id="selectByNameAndProductId" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM mmall_product
+    <where>
+      <if test="productName != null">
+        AND name LIKE #{productName}
+      </if>
+      <if test="productId !=null">
+        AND id LIKE #{productId}
+      </if>
+    </where>
+  </select>
 </mapper>

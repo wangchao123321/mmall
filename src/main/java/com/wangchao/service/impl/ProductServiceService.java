@@ -3,6 +3,7 @@ package com.wangchao.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.wangchao.common.Const;
 import com.wangchao.common.ResponseCode;
 import com.wangchao.common.ServerResponse;
 import com.wangchao.dao.CategoryMapper;
@@ -106,6 +107,43 @@ public class ProductServiceService implements IProductService {
         }
         PageInfo pageInfo=new PageInfo<>(productListVOS);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> searchProduct(String productName, Integer productId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        if(StringUtils.isNotBlank(productName)){
+            productName=new StringBuilder().append("%").append(productName).append("%").toString();
+        }
+        List<Product> productList = productMapper.selectByNameAndProductId(productName,productId);
+
+        List<ProductListVO> productListVOS= Lists.newArrayList();
+        for (Product product : productList) {
+            ProductListVO productListVO = assembleProductListVO(product);
+            productListVOS.add(productListVO);
+        }
+        PageInfo pageInfo=new PageInfo(productList);
+        pageInfo.setList(productListVOS);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse<ProductDetailVO> getProductDetail(Integer productId) {
+        if(productId == null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),
+                    ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+        Product product=productMapper.selectByPrimaryKey(productId);
+        if(product==null){
+            return ServerResponse.createByErrorMessage("产品已下架或删除");
+        }
+
+        if(product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()){
+            return ServerResponse.createByErrorMessage("产品已下架或删除");
+        }
+
+        ProductDetailVO productDetailVO=assembleProductDetailVO(product);
+        return ServerResponse.createBySuccess(productDetailVO);
     }
 
 

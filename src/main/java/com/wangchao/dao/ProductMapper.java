@@ -1,6 +1,7 @@
 package com.wangchao.dao;
 
 import com.wangchao.pojo.Product;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface ProductMapper {
     int updateByPrimaryKey(Product record);
 
     List<Product> selectList();
+
+    List<Product> selectByNameAndProductId(@Param("productName") String productName,@Param("productId") Integer productId);
 }
