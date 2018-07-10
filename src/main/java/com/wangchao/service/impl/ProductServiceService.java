@@ -10,16 +10,17 @@ import com.wangchao.dao.CategoryMapper;
 import com.wangchao.dao.ProductMapper;
 import com.wangchao.pojo.Category;
 import com.wangchao.pojo.Product;
+import com.wangchao.service.ICategoryService;
 import com.wangchao.service.IProductService;
 import com.wangchao.util.DateTimeUtil;
 import com.wangchao.util.PropertiesUtil;
 import com.wangchao.vo.ProductDetailVO;
 import com.wangchao.vo.ProductListVO;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("iProductService")
@@ -31,6 +32,9 @@ public class ProductServiceService implements IProductService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private ICategoryService iCategoryService;
 
     @Override
     public ServerResponse saveOrUpdateProduct(Product product) {
@@ -144,6 +148,50 @@ public class ProductServiceService implements IProductService {
 
         ProductDetailVO productDetailVO=assembleProductDetailVO(product);
         return ServerResponse.createBySuccess(productDetailVO);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> getProductByKeywordCategory(String keyword, Integer categoryId, int pageNum, int pageSize,String orderBy) {
+        if(StringUtils.isBlank(keyword) && categoryId == null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+
+        List<Integer> categoryIdList=new ArrayList<>();
+        if(categoryId != null){
+            Category category=categoryMapper.selectByPrimaryKey(categoryId);
+            if(category == null && StringUtils.isBlank(keyword)){
+                PageHelper.startPage(pageNum,pageSize);
+                List<ProductListVO> productListVOS=Lists.newArrayList();
+                PageInfo pageInfo=new PageInfo(productListVOS);
+                return ServerResponse.createBySuccess(pageInfo);
+            }
+            categoryIdList=iCategoryService.getCategoryAndDeepChildrenCategory(category.getId()).getData();
+        }
+        if(StringUtils.isNotBlank(keyword)){
+            keyword=new StringBuilder().append("%").append(keyword).append("%").toString();
+        }
+
+        PageHelper.startPage(pageNum,pageSize);
+        if(StringUtils.isNotBlank(orderBy)){
+            if(Const.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)){
+                String[] orderByArray=orderBy.split("_");
+                PageHelper.orderBy(orderByArray[0]+" "+orderByArray[1]);
+            }
+        }
+
+        List<Product> productList=productMapper.selectByNameAndCategoryIds(
+                StringUtils.isBlank(keyword)? null : keyword,categoryIdList.size()==0?null:categoryIdList);
+
+        List<ProductListVO> productListVOList=Lists.newArrayList();
+        for (Product product : productList) {
+            ProductListVO productListVO=assembleProductListVO(product);
+            productListVOList.add(productListVO);
+        }
+
+        PageInfo pageInfo=new PageInfo<>(productList);
+        pageInfo.setList(productListVOList);
+
+        return ServerResponse.createBySuccess(pageInfo);
     }
 
 
