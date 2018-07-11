@@ -96,8 +96,8 @@ public class PorductManagerController {
     public ServerResponse productSearch(HttpSession session,
                                   @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
                                   @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
-                                        @RequestParam(value = "productName") String productName,
-                                        @RequestParam(value = "productId") Integer productId){
+                                        @RequestParam(value = "productName",required = false) String productName,
+                                        @RequestParam(value = "productId",required = false) Integer productId){
         User user= (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录，请登录管理员");

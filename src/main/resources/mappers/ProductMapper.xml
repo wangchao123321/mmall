@@ -201,13 +201,13 @@
     SELECT
     <include refid="Base_Column_List" />
     FROM mmall_product
-    where status=1
+    where status = 1
     <if test="productName != null">
-      AND name LIKE #{productName}
+      and name like #{productName}
     </if>
     <if test="categoryIdList != null">
       AND category_id in
-      <foreach item="item" index="index" open="{" close="}" separator="," collection="categoryIdList">
+      <foreach item="item" index="index" open="(" close=")" separator="," collection="categoryIdList">
         #{item}
       </foreach>
     </if>

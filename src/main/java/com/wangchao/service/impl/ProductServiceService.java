@@ -47,8 +47,8 @@ public class ProductServiceService implements IProductService {
             }
 
             // 更新
-            if(product!=null){
-                int rowCount=productMapper.updateByPrimaryKey(product);
+            if(product.getId()!=null){
+                int rowCount=productMapper.updateByPrimaryKeySelective(product);
                 if(rowCount>0){
                     return ServerResponse.createBySuccess("更新成功");
                 }
