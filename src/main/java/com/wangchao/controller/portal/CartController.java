@@ -58,7 +58,7 @@ public class CartController {
 
 
     //全选
-    @RequestMapping("selectAll,do")
+    @RequestMapping("selectAll.do")
     public ServerResponse<CartVo> selectAll(HttpSession session){
         User user= (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null){
@@ -68,7 +68,7 @@ public class CartController {
     }
 
     //全反选
-    @RequestMapping("unselectAll,do")
+    @RequestMapping("unselectAll.do")
     public ServerResponse<CartVo> unselectAll(HttpSession session){
         User user= (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null){
@@ -78,26 +78,26 @@ public class CartController {
     }
 
     //单独选
-    @RequestMapping("select,do")
+    @RequestMapping("select.do")
     public ServerResponse<CartVo> select(HttpSession session,Integer productId){
         User user= (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnSelectAll(user.getId(),Const.Cart.CHEKED,null);
+        return iCartService.selectOrUnSelectAll(user.getId(),Const.Cart.CHEKED,productId);
     }
     //单独反选
-    @RequestMapping("unselect,do")
+    @RequestMapping("unselect.do")
     public ServerResponse<CartVo> unselect(HttpSession session,Integer productId){
         User user= (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnSelectAll(user.getId(),Const.Cart.UNCHEKED,null);
+        return iCartService.selectOrUnSelectAll(user.getId(),Const.Cart.UNCHEKED,productId);
     }
 
     //查询当前用户的购物车里面的产品数量,如果一个产品有10个，数量就是10
-    @RequestMapping("getCartProductCount,do")
+    @RequestMapping("getCartProductCount.do")
     public ServerResponse<Integer> getCartProductCount(HttpSession session){
         User user= (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null){
