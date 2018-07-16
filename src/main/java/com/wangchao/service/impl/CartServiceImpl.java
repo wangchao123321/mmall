@@ -109,7 +109,7 @@ public class CartServiceImpl implements ICartService{
                 cartProductVO.setUserId(userId);
                 cartProductVO.setProductId(cart.getProductId());
 
-                Product product=productMapper.selectByPrimaryKey(cartProductVO.getProductId());
+                Product product=productMapper.selectByPrimaryKey(cart.getProductId());
                 if(product!=null){
                     cartProductVO.setProductMainImage(product.getMainImage());
                     cartProductVO.setProductName(product.getName());
@@ -120,12 +120,12 @@ public class CartServiceImpl implements ICartService{
 
                     //判断库存
                     int buyLimitCount=0;
-                    if(product.getStock()>cart.getQuantity()){
+                    if(product.getStock() >= cart.getQuantity()){
                         buyLimitCount=cart.getQuantity();
                         cartProductVO.setLimitQuantity(Const.Cart.LIMIT_NUM_SUCCESS);
                     }else{
-                        buyLimitCount=product.getStatus();
-                        cartProductVO.setLimitQuantity(Const.Cart.LIMIT_NUM_SUCCESS);
+                        buyLimitCount=product.getStock();
+                        cartProductVO.setLimitQuantity(Const.Cart.LIMIT_NUM_FAIL);
                         // 购物车中更新有效库存
                         Cart cartForQuantity=new Cart();
                         cartForQuantity.setId(cart.getId());
