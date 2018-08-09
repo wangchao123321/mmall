@@ -330,7 +330,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <deploy.type>dev</deploy.type>
+            <deploy.type>dev</deploy.type>
       </properties>
     </profile>
     <profile>
