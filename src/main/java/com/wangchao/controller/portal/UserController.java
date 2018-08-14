@@ -2,10 +2,12 @@ package com.wangchao.controller.portal;
 
 
 import com.wangchao.common.Const;
+import com.wangchao.common.RedisPool;
 import com.wangchao.common.ResponseCode;
 import com.wangchao.common.ServerResponse;
 import com.wangchao.pojo.User;
 import com.wangchao.service.IUserService;
+import com.wangchao.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +35,13 @@ public class UserController {
     public ServerResponse<User> login(String userName, String password, HttpSession session){
         ServerResponse<User> response=iUserService.login(userName,password);
         if(response.isSuccess()){
-            session.setAttribute(Const.CURRENT_USER,response.getData());
+//            session.setAttribute(Const.CURRENT_USER,response.getData());
+
+            try {
+                RedisPool.getJedis().setex(session.getId(),Const.RedisCacheExtime.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return response;
     }
