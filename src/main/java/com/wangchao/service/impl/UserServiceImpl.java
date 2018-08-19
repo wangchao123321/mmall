@@ -1,6 +1,7 @@
 package com.wangchao.service.impl;
 
 import com.wangchao.common.Const;
+import com.wangchao.common.RedisPool;
 import com.wangchao.common.ServerResponse;
 import com.wangchao.common.TokenCache;
 import com.wangchao.dao.UserMapper;
@@ -106,7 +107,7 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.createByErrorMessage("用户不存在");
         }
 
-        String token=TokenCache.getKey(TokenCache.TOKEN_PREFIX+userName);
+        String token=RedisPool.getJedis().get(Const.TOKEN_PREFIX+userName);
         if(StringUtils.isBlank(token)){
             return ServerResponse.createByErrorMessage("token无效或者过期");
         }
@@ -129,7 +130,7 @@ public class UserServiceImpl implements IUserService {
         int resultCount=userMapper.checkAnwser(userName,question,answer);
         if(resultCount > 0){
             String forgetToken= UUID.randomUUID().toString();
-            TokenCache.setKey(TokenCache.TOKEN_PREFIX+userName,forgetToken);
+            RedisPool.getJedis().setex(Const.TOKEN_PREFIX+userName,60*60*12,forgetToken);
             return ServerResponse.createBySuccess(forgetToken);
         }
         return ServerResponse.createByErrorMessage("问题答案错误");
