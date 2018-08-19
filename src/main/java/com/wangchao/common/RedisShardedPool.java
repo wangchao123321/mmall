@@ -71,7 +71,7 @@ public class RedisShardedPool {
     public static void main(String[] args) {
         ShardedJedis jedis = pool.getResource();
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 15; i < 30; i++) {
             jedis.set("key"+i,"value"+i);
         }
         returnResource(jedis);
