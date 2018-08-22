@@ -33,7 +33,7 @@ public class UserSpringSessionController {
      * @param password
      * @return
      */
-    @RequestMapping(value = "login.do",method = RequestMethod.POST)
+    @RequestMapping(value = "login.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<User> login(HttpSession session,String userName, String password, HttpServletRequest request, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest){
         ServerResponse<User> response=iUserService.login(userName,password);
@@ -53,15 +53,17 @@ public class UserSpringSessionController {
 
     @RequestMapping(value = "getUserInfo.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpServletRequest request){
-//        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<User> getUserInfo(HttpSession session,HttpServletRequest request){
 
-        String loginToken=CookieUtil.readLoginToken(request);
-        if(StringUtils.isNotEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登录");
-        }
-        String userJsonStr=RedisPool.getJedis().get(loginToken);
-        User user=JsonUtil.string2Obj(userJsonStr,User.class);
+//        String loginToken=CookieUtil.readLoginToken(request);
+//        if(StringUtils.isNotEmpty(loginToken)){
+//            return ServerResponse.createByErrorMessage("用户未登录");
+//        }
+//        String userJsonStr=RedisPool.getJedis().get(loginToken);
+//        User user=JsonUtil.string2Obj(userJsonStr,User.class);
+
+        User user= (User) session.getAttribute(Const.CURRENT_USER);
+
         if(user != null){
             return ServerResponse.createBySuccess(user);
         }

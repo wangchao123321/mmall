@@ -48,6 +48,7 @@ public class RedisShardedPool {
         jedisShardInfoList.add(info2);
         jedisShardInfoList.add(info3);
 
+
         pool=new ShardedJedisPool(config,jedisShardInfoList, Hashing.MURMUR_HASH, Sharded.DEFAULT_KEY_TAG_PATTERN);
     }
 
