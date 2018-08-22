@@ -44,14 +44,14 @@ public class UserSpringSessionController {
     }
 
 
-    @RequestMapping(value = "logout.do",method = RequestMethod.POST)
+    @RequestMapping(value = "logout.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<User> logout(HttpSession session,HttpServletRequest request,HttpServletResponse response){
         session.removeAttribute(Const.CURRENT_USER);
         return ServerResponse.createBySuccess();
     }
 
-    @RequestMapping(value = "getUserInfo.do",method = RequestMethod.POST)
+    @RequestMapping(value = "getUserInfo.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<User> getUserInfo(HttpSession session,HttpServletRequest request){
 

@@ -14,7 +14,7 @@
     </bean>
 
     <bean id="defaultCookieSerializer" class="org.springframework.session.web.http.DefaultCookieSerializer">
-        <!--<property name="cookieName" value="SESSION_NAME"/>-->
+        <property name="cookieName" value="SESSION_NAME"/>
         <property name="domainName" value=".happymmall.com"/>
         <property name="useHttpOnlyCookie" value="true"/>
         <property name="cookiePath" value="/"/>

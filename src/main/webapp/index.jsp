@@ -1,6 +1,6 @@
 <html>
 <body>
-<h2>tomcat2</h2>
+<h2>tomcat1</h2>
 
 <form action="/manage/product/upload.do" method="post" enctype="multipart/form-data">
     <input name="uploadFile" type="file">
