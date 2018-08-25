@@ -41,5 +41,11 @@
         <property name="defaultEncoding" value="UTF-8"></property>
     </bean>
 
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/manage/**"/>
+            <bean class="com.wangchao.controller.common.intercepter.AuthorityIntercepter"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>
